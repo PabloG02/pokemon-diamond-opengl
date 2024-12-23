@@ -5,7 +5,7 @@
 
 void IntroScene::initialize() {
     // Dialga
-    dialga.loadFromFile("./assets/Dialga.obj");
+    dialga.loadFromFile("./assets/art/models/title-screen-dialga/Dialga.obj");
     dialga.setGroupWithScrollingTexture("iar_skin", 0.0, -0.2);
     // Pokemon logo
     pokemonLogoTexture = TextureLoader::loadTexture("./assets/pokemon-diamond-logo-big.png");
