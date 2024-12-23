@@ -20,7 +20,7 @@ class Map {
   private:
     void renderTerrain();
     void renderObjects();
-    void renderMapObject(const Object &object, double targetSize, double x, double y, double z,
+    void renderMapObject(Object &object, double targetSize, double x, double y, double z,
                          int footprintWidth, int footprintHeight,
                          std::vector<std::vector<std::string>> &objects_copy, int i, int j);
     void renderFence(ModelType fenceType, double x, double y, double z);

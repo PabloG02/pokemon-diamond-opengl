@@ -50,7 +50,7 @@ class Object {
     void setGroupWithScrollingTexture(const std::string &groupName, double speedX, double speedY);
     BoundingBox getBoundingBox() const;
     double calculateScaleFactor(double targetSize) const;
-    void render() const;
+    void render();
     void update(const double deltaTime);
 
   private:
@@ -65,4 +65,9 @@ class Object {
     std::unordered_map<std::string, GLuint> textures;
 
     std::unordered_map<std::string, ScrollingTexture> scrollingTextures;
+
+    GLuint displayListID = 0;
+
+     // An object is static none of it's properties change (textures, geometry...)
+    bool isStatic() const;
 };

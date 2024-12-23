@@ -151,7 +151,7 @@ void Map::renderObjects() {
     glPopMatrix();
 }
 
-void Map::renderMapObject(const Object &object, double targetSize, double x, double y, double z,
+void Map::renderMapObject(Object &object, double targetSize, double x, double y, double z,
                           int footprintWidth, int footprintHeight,
                           std::vector<std::vector<std::string>> &objects_copy, int i, int j) {
     glPushMatrix();

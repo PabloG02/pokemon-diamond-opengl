@@ -193,89 +193,110 @@ void Object::update(const double deltaTime) {
     }
 }
 
-void Object::render() const {
+bool Object::isStatic() const {
+    return scrollingTextures.empty();
+}
+
+void Object::render() {
     glColor3ub(255, 255, 255);
     glColorMaterial(GL_FRONT, GL_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
 
-    for (const auto &[name, group] : groups) {
-        // Set the material properties
-        if (materials.contains(group.material)) {
-            const auto &material = materials.at(group.material);
-            GLfloat ambient[] = {static_cast<GLfloat>(material.Ka.r),
-                                static_cast<GLfloat>(material.Ka.g),
-                                static_cast<GLfloat>(material.Ka.b), 1.0f};
-            GLfloat diffuse[] = {static_cast<GLfloat>(material.Kd.r),
-                                static_cast<GLfloat>(material.Kd.g),
-                                static_cast<GLfloat>(material.Kd.b), 1.0f};
-            GLfloat specular[] = {static_cast<GLfloat>(material.Ks.r),
-                                static_cast<GLfloat>(material.Ks.g),
-                                static_cast<GLfloat>(material.Ks.b), 1.0f};
+    if (displayListID != 0) {
+        // Display list already exists, just call it
+        glCallList(displayListID);
+    }
 
-            glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-            glMaterialf(GL_FRONT, GL_SHININESS, static_cast<GLfloat>(material.Ns));
+    // Render the object by hand if the display list is not created or the object is not static
+    if (displayListID == 0) {
+        if (isStatic()) {
+            // Create a new display list if not created and the object is static
+            displayListID = glGenLists(1);
+            glNewList(displayListID, GL_COMPILE);
+        }
 
-            // Bind texture if the material has one
-            if (!material.map_Kd.empty() && textures.contains(group.material)) {
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, textures.at(group.material));
+        for (const auto &[name, group] : groups) {
+            // Set the material properties
+            if (materials.contains(group.material)) {
+                const auto &material = materials.at(group.material);
+                GLfloat ambient[] = {static_cast<GLfloat>(material.Ka.r),
+                                     static_cast<GLfloat>(material.Ka.g),
+                                     static_cast<GLfloat>(material.Ka.b), 1.0f};
+                GLfloat diffuse[] = {static_cast<GLfloat>(material.Kd.r),
+                                     static_cast<GLfloat>(material.Kd.g),
+                                     static_cast<GLfloat>(material.Kd.b), 1.0f};
+                GLfloat specular[] = {static_cast<GLfloat>(material.Ks.r),
+                                      static_cast<GLfloat>(material.Ks.g),
+                                      static_cast<GLfloat>(material.Ks.b), 1.0f};
 
-                // Apply texture transformation if it's a scrolling texture
-                // TODO: name is set, but group.name is empty
-                if (scrollingTextures.contains(name)) {
-                    auto &scrollingTexture = scrollingTextures.at(name);
-                    auto &offset = scrollingTexture.offset;
+                glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+                glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+                glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+                glMaterialf(GL_FRONT, GL_SHININESS, static_cast<GLfloat>(material.Ns));
 
-                    // Apply the offset
-                    glMatrixMode(GL_TEXTURE);
-                    glLoadIdentity();
-                    glTranslated(offset.first, offset.second, 0.0);
-                    glMatrixMode(GL_MODELVIEW);
+                // Bind texture if the material has one
+                if (!material.map_Kd.empty() && textures.contains(group.material)) {
+                    glEnable(GL_TEXTURE_2D);
+                    glBindTexture(GL_TEXTURE_2D, textures.at(group.material));
+
+                    // Apply texture transformation if it's a scrolling texture
+                    // TODO: name is set, but group.name is empty
+                    if (scrollingTextures.contains(name)) {
+                        auto &scrollingTexture = scrollingTextures.at(name);
+                        auto &offset = scrollingTexture.offset;
+
+                        // Apply the offset
+                        glMatrixMode(GL_TEXTURE);
+                        glLoadIdentity();
+                        glTranslated(offset.first, offset.second, 0.0);
+                        glMatrixMode(GL_MODELVIEW);
+                    }
+                } else {
+                    glDisable(GL_TEXTURE_2D);
                 }
             } else {
                 glDisable(GL_TEXTURE_2D);
             }
-        } else {
-            glDisable(GL_TEXTURE_2D);
-        }
 
-        glBegin(GL_TRIANGLES);
-        // Render the faces
-        for (const auto &face : group.faces) {
-            //// Generate random color
-            //float r = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
-            //float g = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
-            //float b = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+            glBegin(GL_TRIANGLES);
+            // Render the faces
+            for (const auto &face : group.faces) {
+                //// Generate random color
+                // float r = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+                // float g = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+                // float b = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
-            //// Set the color for the current triangle
-            //glColor3f(r, g, b);
+                //// Set the color for the current triangle
+                // glColor3f(r, g, b);
 
-            for (const auto &vertex_index : face.vertex_indices) {
-                int vertexIdx = std::get<0>(vertex_index);
-                int texCoordIdx = std::get<1>(vertex_index);
-                int normalIdx = std::get<2>(vertex_index);
+                for (const auto &[vertexIdx, texCoordIdx, normalIdx] : face.vertex_indices) {
+                    if (normalIdx >= 0) {
+                        const auto &n = normals[normalIdx];
+                        glNormal3d(n.nx, n.ny, n.nz);
+                    }
+                    if (texCoordIdx >= 0) {
+                        const auto &tc = textureCoords[texCoordIdx];
+                        glTexCoord2d(tc.u, tc.v);
+                    }
 
-                if (normalIdx >= 0) {
-                    const auto &n = normals[normalIdx];
-                    glNormal3d(n.nx, n.ny, n.nz);
+                    const auto &v = vertices[vertexIdx];
+                    glVertex3d(v.x, v.y, v.z);
                 }
-                if (texCoordIdx >= 0) {
-                    const auto &tc = textureCoords[texCoordIdx];
-                    glTexCoord2d(tc.u, tc.v);
-                }
-
-                const auto &v = vertices[vertexIdx];
-                glVertex3d(v.x, v.y, v.z);
             }
-        }
-        glEnd();
+            glEnd();
 
-        // Reset the texture matrix
-        glMatrixMode(GL_TEXTURE);
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
+            // Reset the texture matrix
+            glMatrixMode(GL_TEXTURE);
+            glLoadIdentity();
+            glMatrixMode(GL_MODELVIEW);
+        }
+        
+        if (isStatic()) {
+            // If static, it's creating the display list, so end it
+            glEndList();
+            // Call the display list (needed to not loose a frame of rendering)
+            glCallList(displayListID);
+        }
     }
 
     glDisable(GL_COLOR_MATERIAL);
