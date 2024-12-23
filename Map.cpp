@@ -9,7 +9,7 @@ Map::Map() {
     // Load models in constructor
     house.loadFromFile("./assets/Twinleaf Town - Small house.obj");
     tree.loadFromFile("./assets/art/models/pine-tree/pine-tree.obj");
-    flower.loadFromFile("./assets/flower.obj");
+    flower.loadFromFile("./assets/art/models/flower/flower.obj");
     grass.loadFromFile("./assets/art/models/grass/grass.obj");
     woodenSign.loadFromFile("./assets/art/models/wooden-sign/wooden-sign.obj");
     mailbox.loadFromFile("./assets/art/models/mailbox/mailbox.obj");
