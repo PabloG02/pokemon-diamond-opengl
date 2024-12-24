@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "IntroScene.h"
 #include "WorldScene.h"
+#include "BattleScene.h"
 #include "freeglut.h"
 #include "glig.h"
 /* Texture loading library */

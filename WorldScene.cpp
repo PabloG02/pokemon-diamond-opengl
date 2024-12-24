@@ -6,14 +6,18 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include "BattleScene.h"
 
 void WorldScene::initialize() {
-    //map.loadTerrain("./assets/Twinleaf Town - Terrain.txt");
-    //map.loadMapObjects("./assets/Twinleaf Town - Objects.txt");
-    map.loadTerrain("./assets/Route 201 - Terrain.txt");
-    map.loadMapObjects("./assets/Route 201 - Objects.txt");
-    player.loadFromFile("./assets/art/models/red/Red.obj");
-    player.setCollisionMap(map.getCollisionMap());
+    if (!isInitialized) {
+        map.loadTerrain("./assets/Twinleaf Town - Terrain.txt");
+        map.loadMapObjects("./assets/Twinleaf Town - Objects.txt");
+        // map.loadTerrain("./assets/Route 201 - Terrain.txt");
+        // map.loadMapObjects("./assets/Route 201 - Objects.txt");
+        player.loadFromFile("./assets/art/models/red/Red.obj");
+        player.setCollisionMap(map.getCollisionMap());
+        isInitialized = true;
+    }
     audioEngine.playMusic("./assets/audio/music/route-201.mp3");
     registerInputCallbacks();
 }
@@ -61,6 +65,7 @@ void WorldScene::renderPlayer() {
     glPopMatrix();
 }
 
+extern Scene *scene;
 void WorldScene::keyboardCallback(unsigned char key, int x, int y) {
     switch (key) {
     case 'm':
@@ -81,6 +86,10 @@ void WorldScene::keyboardCallback(unsigned char key, int x, int y) {
         } else {
             player.interact();
         }
+        break;
+    case 'b':
+        scene = &BattleScene::getInstance();
+        scene->initialize();
         break;
     }
 }

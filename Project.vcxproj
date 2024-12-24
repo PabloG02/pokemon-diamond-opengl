@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioEngine.cpp" />
+    <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="glig.cpp" />
     <ClCompile Include="glig_temp.cpp" />
     <ClCompile Include="IntroScene.cpp" />
@@ -144,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioEngine.h" />
+    <ClInclude Include="BattleScene.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="glig.h" />
     <ClInclude Include="IntroScene.h" />

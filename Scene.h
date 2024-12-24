@@ -13,4 +13,5 @@ class Scene {
 
   protected:
     AudioEngine &audioEngine = AudioEngine::getInstance();
+    bool isInitialized{false};
 };
