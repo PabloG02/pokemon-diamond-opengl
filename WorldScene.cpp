@@ -17,7 +17,10 @@ void WorldScene::initialize() {
         // map.loadTerrain("./assets/Route 201 - Terrain.txt");
         // map.loadMapObjects("./assets/Route 201 - Objects.txt");
         player.setIdleModel("./assets/art/models/lucas/lucas.obj");
-        player.setWalkingModel({"./assets/art/models/lucas-walk/lucas-walk.obj"});
+        player.setWalkingModel({
+            "./assets/art/models/lucas-walk/lucas-walk.obj",
+            "./assets/art/models/lucas-walk-2/lucas-walk-2.obj",
+        });
         player.setCollisionMap(map.getCollisionMap());
         isInitialized = true;
     }

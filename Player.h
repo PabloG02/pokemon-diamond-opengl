@@ -29,6 +29,7 @@ class Player {
     std::vector<Object> walkingModels; // The player's walking 3D models
 
     std::shared_ptr<Object> currentModel;       // The player's current 3D model
+    int currentWalkingModel{0};                 // The player's current walking model
     double scale{1.0};                          // The player's model scale to fit the 1x1 grid
     Direction orientation{Direction::DOWN};     // The player's orientation
     bool hasQueuedMovement = false;             // Whether we have a queued movement

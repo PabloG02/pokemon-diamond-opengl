@@ -93,9 +93,8 @@ void Player::update(double deltaTime) {
         return;
     }
 
-    // Update the model based on the current walking frame
-    int frame = static_cast<int>(moveProgress * walkingModels.size());
-    currentModel = std::make_shared<Object>(walkingModels[frame]);
+    // Update model to use the walking animation
+    currentModel = std::make_shared<Object>(walkingModels[currentWalkingModel]);
 
     moveProgress += moveSpeed * deltaTime;
     // Clamp progress to 1.0
@@ -109,6 +108,9 @@ void Player::update(double deltaTime) {
 
         // If we have a queued movement, start it immediately
         if (hasQueuedMovement) {
+            // Cycle through walking models
+            currentWalkingModel = (currentWalkingModel + 1) % walkingModels.size();
+
             startMovement(queuedDirection);
             hasQueuedMovement = false;
         }
