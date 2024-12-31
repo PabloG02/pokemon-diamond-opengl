@@ -110,6 +110,9 @@
     <ClInclude Include="BattleScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MapData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project.rc">

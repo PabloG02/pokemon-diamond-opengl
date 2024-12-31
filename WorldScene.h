@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include "Map.h"
+#include "MapData.h"
 
 class WorldScene : public Scene {
   public:
@@ -26,6 +27,9 @@ class WorldScene : public Scene {
     void specialKeyboardCallbackMovement(int key, int x, int y);
     void specialKeyboardCallbackMenu(int key, int x, int y);
 
+    std::string getCurrentMapId() const;
+    void changeMap(const std::string &mapId);
+
   private:
     WorldScene() = default; // Private constructor for singleton
 
@@ -33,6 +37,7 @@ class WorldScene : public Scene {
 
     Player player;
     Map map;
+    std::string currentMapId{"tp-twin"};
     Menu menu;
 
     double alpha{0.0};

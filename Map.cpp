@@ -19,6 +19,12 @@ Map::Map() {
         "./assets/art/models/pokemon-research-lab/pokemon-research-lab.obj");
 }
 
+void Map::loadMap(const std::string &mapName) {
+    loadTerrain("./assets/" + mapName + " - Terrain.txt");
+    loadMapObjects("./assets/" + mapName + " - Objects.txt");
+    loadEvents("./assets/" + mapName + " - Events.txt");
+}
+
 void Map::loadTerrain(const std::string &mapPath) {
     std::ifstream inputFile(mapPath);
     if (!inputFile.is_open()) {
@@ -68,6 +74,28 @@ void Map::loadMapObjects(const std::string &mapPath) {
         }
     }
 
+    inputFile.close();
+}
+
+void Map::loadEvents(const std::string &eventsPath) {
+    std::ifstream inputFile(eventsPath);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening events file: " << eventsPath << std::endl;
+        return;
+    }
+    events.clear();
+    std::string row;
+    while (std::getline(inputFile, row)) {
+        if (!row.empty()) {
+            std::istringstream tilesStream(row);
+            std::vector<std::string> currentRow;
+            std::string tile;
+            while (tilesStream >> tile) {
+                currentRow.push_back(tile);
+            }
+            events.push_back(currentRow);
+        }
+    }
     inputFile.close();
 }
 

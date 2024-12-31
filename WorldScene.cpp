@@ -9,23 +9,33 @@
 #include "BattleScene.h"
 
 void WorldScene::initialize() {
+    auto &mapInfo = MapData::maps.at(currentMapId);
     if (!isInitialized) {
-        map.loadTerrain("./assets/Sandgem Town - Terrain.txt");
-        map.loadMapObjects("./assets/Sandgem Town - Objects.txt");
-        //map.loadTerrain("./assets/Twinleaf Town - Terrain.txt");
-        //map.loadMapObjects("./assets/Twinleaf Town - Objects.txt");
-        // map.loadTerrain("./assets/Route 201 - Terrain.txt");
-        // map.loadMapObjects("./assets/Route 201 - Objects.txt");
+        map.loadMap(mapInfo.name);
         player.setIdleModel("./assets/art/models/lucas/lucas.obj");
         player.setWalkingModel({
             "./assets/art/models/lucas-walk/lucas-walk.obj",
             "./assets/art/models/lucas-walk-2/lucas-walk-2.obj",
         });
         player.setCollisionMap(map.getCollisionMap());
+        player.setEventsMap(map.getEvents(), currentMapId);
         isInitialized = true;
     }
-    audioEngine.playMusic("./assets/audio/music/route-201.mp3");
+    audioEngine.playMusic(mapInfo.soundtrack);
     registerInputCallbacks();
+}
+
+std::string WorldScene::getCurrentMapId() const {
+    return currentMapId;
+}
+
+void WorldScene::changeMap(const std::string &mapId) {
+    auto &mapInfo = MapData::maps.at(mapId);
+    currentMapId = mapId;
+    map.loadMap(mapInfo.name);
+    player.setCollisionMap(map.getCollisionMap());
+    player.setEventsMap(map.getEvents(), mapId);
+    audioEngine.playMusic(mapInfo.soundtrack);
 }
 
 void WorldScene::registerInputCallbacks() {

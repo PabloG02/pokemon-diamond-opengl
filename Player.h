@@ -11,6 +11,7 @@ class Player {
     void setIdleModel(const std::string &filename);
     void setWalkingModel(const std::vector<std::string> &filenames);
     void setCollisionMap(const std::vector<std::vector<std::string>> &map);
+    void setEventsMap(const std::vector<std::vector<std::string>> &map, const std::string &mapId);
     void queueMovement(Direction direction);
     void startMovement(Direction direction);
     bool isTileBlocked(int x, int z) const;
@@ -22,7 +23,7 @@ class Player {
     double getZ() const;
     bool getIsMoving() const;
 
-    void interact() const;
+    void interact();
 
   private:
     Object idleModel;                  // The player's idle 3D model
@@ -35,6 +36,7 @@ class Player {
     bool hasQueuedMovement = false;             // Whether we have a queued movement
     Direction queuedDirection{Direction::DOWN}; // Store next movement
     std::vector<std::vector<std::string>> collisionMap; // The map of collision tiles
+    std::vector<std::vector<std::string>> eventsMap;    // The map of event tiles
 
     double x{15}, y{0}, z{15};    // The player's position (can be fractional during movement)
     int startX{15}, startZ{15};   // The player's start position for interpolation

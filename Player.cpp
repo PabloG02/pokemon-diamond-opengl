@@ -1,5 +1,7 @@
 #include "freeglut.h"
 #include "Player.h"
+#include "MapData.h"
+#include "WorldScene.h"
 #include <algorithm>
 
 void Player::setIdleModel(const std::string &filename) {
@@ -22,6 +24,11 @@ void Player::setWalkingModel(const std::vector<std::string> &filenames) {
 
 void Player::setCollisionMap(const std::vector<std::vector<std::string>> &map) {
     collisionMap = map;
+}
+
+void Player::setEventsMap(const std::vector<std::vector<std::string>> &map,
+                          const std::string &mapId) {
+    eventsMap = map;
 }
 
 void Player::queueMovement(Direction direction) {
@@ -145,7 +152,7 @@ bool Player::getIsMoving() const {
     return isMoving;
 }
 
-void Player::interact() const {
+void Player::interact() {
     // Direction deltas for movement
     int deltaX = 0, deltaZ = 0;
 
@@ -169,8 +176,25 @@ void Player::interact() const {
     int targetEventX = static_cast<int>(x) + deltaX;
     int targetEventZ = static_cast<int>(z) + deltaZ;
 
+    // Check if the tile the player is on is a teleporter
+    if (eventsMap[static_cast<int>(z)][static_cast<int>(x)].starts_with("tp-")) {
+        // Get the map ID of the event tile
+        std::string currentMapId = WorldScene::getInstance().getCurrentMapId();
+        // Set the new map
+        WorldScene::getInstance().changeMap(eventsMap[static_cast<int>(z)][static_cast<int>(x)]);
+        // EventsMap has been updated to the new one. Find the player's new position
+        for (int i = 0; i < eventsMap.size(); i++) {
+            for (int j = 0; j < eventsMap[i].size(); j++) {
+                if (eventsMap[i][j] == currentMapId) {
+                    x = static_cast<double>(j);
+                    z = static_cast<double>(i);
+                    return;
+                }
+            }
+        }
+    }
     // Check if the tile the player is facing is interactable
-    if (collisionMap[targetEventZ][targetEventX] == "100") {
+    else if (collisionMap[targetEventZ][targetEventX] == "100") { // TODO: Change
         printf("Interacted with event at (%d, %d)\n", targetEventX, targetEventZ);
     }
 }

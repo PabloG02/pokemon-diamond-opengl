@@ -150,6 +150,7 @@
     <ClInclude Include="glig.h" />
     <ClInclude Include="IntroScene.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MapData.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="ModelType.h" />

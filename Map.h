@@ -9,12 +9,17 @@ class Map {
   public:
     Map();
 
+    void loadMap(const std::string &mapName);
     void loadTerrain(const std::string &mapPath);
     void loadMapObjects(const std::string &objectsPath);
+    void loadEvents(const std::string &eventsPath);
     void render();
 
     const std::vector<std::vector<std::string>> &getCollisionMap() const {
         return objects;
+    }
+    const std::vector<std::vector<std::string>> &getEvents() const {
+        return events;
     }
 
   private:
@@ -27,6 +32,7 @@ class Map {
 
     std::vector<std::vector<std::string>> terrain;
     std::vector<std::vector<std::string>> objects;
+    std::vector<std::vector<std::string>> events;
     Object house;
     Object tree;
     Object flower;
