@@ -14,6 +14,9 @@ class Tile {
         Sand = 2,
         GrassSand = 3,
         GrassSandCorner = 4,
+        Beach = 5,
+        GrassBeach = 6,
+        GrassBeachCorner = 7,
         LakeWater = 9
     };
 

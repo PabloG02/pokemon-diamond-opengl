@@ -5,7 +5,11 @@ std::unordered_map<Tile::TileType, Tile::TileProperties> Tile::tilePropertiesMap
     {TileType::Grass, {"./assets/art/tileset/ngrass.png", true}},
     {TileType::Sand, {"./assets/art/tileset/nsand.png", true}},
     {TileType::GrassSand, {"./assets/art/tileset/nsandp.png", false}},
-    {TileType::GrassSandCorner, {"./assets/art/tileset/nsandp.png", false}}};
+    {TileType::GrassSandCorner, {"./assets/art/tileset/nsandp.png", false}},
+    {TileType::Beach, {"./assets/art/tileset/beach.png", true}},
+    {TileType::GrassBeach, {"./assets/art/tileset/beachp.png", false}},
+    {TileType::GrassBeachCorner, {"./assets/art/tileset/beachp.png", false}},
+};
 
 GLuint Tile::getOrLoadTexture(TileType tileType) {
     if (!tilePropertiesMap.contains(tileType)) {
@@ -36,7 +40,7 @@ std::array<std::array<float, 2>, 4> Tile::calculateTexCoords(bool coversEntireTi
     }
 
     // Handle corner tiles
-    if (tileType == TileType::GrassSandCorner) {
+    if (tileType == TileType::GrassSandCorner || tileType == TileType::GrassBeachCorner) {
         switch (region) {
         case Tile::Region::TopRight:
             return {{

@@ -10,11 +10,14 @@
 
 void WorldScene::initialize() {
     if (!isInitialized) {
-        map.loadTerrain("./assets/Twinleaf Town - Terrain.txt");
-        map.loadMapObjects("./assets/Twinleaf Town - Objects.txt");
+        map.loadTerrain("./assets/Sandgem Town - Terrain.txt");
+        map.loadMapObjects("./assets/Sandgem Town - Objects.txt");
+        //map.loadTerrain("./assets/Twinleaf Town - Terrain.txt");
+        //map.loadMapObjects("./assets/Twinleaf Town - Objects.txt");
         // map.loadTerrain("./assets/Route 201 - Terrain.txt");
         // map.loadMapObjects("./assets/Route 201 - Objects.txt");
-        player.loadFromFile("./assets/art/models/red/Red.obj");
+        player.setIdleModel("./assets/art/models/lucas/lucas.obj");
+        player.setWalkingModel({"./assets/art/models/lucas-walk/lucas-walk.obj"});
         player.setCollisionMap(map.getCollisionMap());
         isInitialized = true;
     }

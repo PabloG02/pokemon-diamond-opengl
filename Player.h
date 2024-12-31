@@ -2,12 +2,14 @@
 
 #include "Direction.h"
 #include "Object.h"
+#include <memory>
 
 class Player {
   public:
     Player() = default;
 
-    void loadFromFile(const std::string &filename);
+    void setIdleModel(const std::string &filename);
+    void setWalkingModel(const std::vector<std::string> &filenames);
     void setCollisionMap(const std::vector<std::vector<std::string>> &map);
     void queueMovement(Direction direction);
     void startMovement(Direction direction);
@@ -23,7 +25,10 @@ class Player {
     void interact() const;
 
   private:
-    Object model;                               // The player's 3D model
+    Object idleModel;                  // The player's idle 3D model
+    std::vector<Object> walkingModels; // The player's walking 3D models
+
+    std::shared_ptr<Object> currentModel;       // The player's current 3D model
     double scale{1.0};                          // The player's model scale to fit the 1x1 grid
     Direction orientation{Direction::DOWN};     // The player's orientation
     bool hasQueuedMovement = false;             // Whether we have a queued movement

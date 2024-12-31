@@ -33,4 +33,7 @@ class Map {
     Object grass;
     Object woodenSign;
     Object mailbox;
+    Object pokemonCenter;
+    Object pokeMart;
+    Object pokemonResearchLab;
 };

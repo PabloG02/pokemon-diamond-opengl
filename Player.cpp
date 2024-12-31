@@ -2,11 +2,22 @@
 #include "Player.h"
 #include <algorithm>
 
-void Player::loadFromFile(const std::string &filename) {
-    model.loadFromFile(filename);
-    BoundingBox box = model.getBoundingBox();
+void Player::setIdleModel(const std::string &filename) {
+    idleModel.loadFromFile(filename);
+    BoundingBox box = idleModel.getBoundingBox();
     // Scale the model to fit the 1x1 grid
     scale = 1.0 / std::max(box.max.x - box.min.x, box.max.z - box.min.z);
+
+    currentModel = std::make_shared<Object>(idleModel);
+}
+
+void Player::setWalkingModel(const std::vector<std::string> &filenames) {
+    walkingModels.clear(); // Clear any previous models
+    for (const auto &filename : filenames) {
+        Object model;
+        model.loadFromFile(filename);
+        walkingModels.push_back(std::move(model));
+    }
 }
 
 void Player::setCollisionMap(const std::vector<std::vector<std::string>> &map) {
@@ -77,8 +88,14 @@ bool Player::isTileBlocked(int x, int z) const {
 }
 
 void Player::update(double deltaTime) {
-    if (!isMoving)
+    if (!isMoving) {
+        currentModel = std::make_shared<Object>(idleModel);
         return;
+    }
+
+    // Update the model based on the current walking frame
+    int frame = static_cast<int>(moveProgress * walkingModels.size());
+    currentModel = std::make_shared<Object>(walkingModels[frame]);
 
     moveProgress += moveSpeed * deltaTime;
     // Clamp progress to 1.0
@@ -107,7 +124,7 @@ void Player::render() {
     glTranslated(x, y, z);
     glRotated(90 * static_cast<int>(orientation), 0, 1, 0);
     glScaled(scale, scale, scale);
-    model.render();
+    currentModel->render();
 }
 
 double Player::getX() const {

@@ -13,6 +13,10 @@ Map::Map() {
     grass.loadFromFile("./assets/art/models/grass/grass.obj");
     woodenSign.loadFromFile("./assets/art/models/wooden-sign/wooden-sign.obj");
     mailbox.loadFromFile("./assets/art/models/mailbox/mailbox.obj");
+    pokemonCenter.loadFromFile("./assets/art/models/pokemon-center/pokemon-center.obj");
+    pokeMart.loadFromFile("./assets/art/models/poke-mart/poke-mart.obj");
+    pokemonResearchLab.loadFromFile(
+        "./assets/art/models/pokemon-research-lab/pokemon-research-lab.obj");
 }
 
 void Map::loadTerrain(const std::string &mapPath) {
@@ -136,6 +140,21 @@ void Map::renderObjects() {
             // Houses
             case 130: // 4x3
                 renderMapObject(house, NULL, 1.0 * j + 1.5, 0.0, 1.0 * i + 1, 4, 3, objects_copy, i, j);
+                break;
+            // Pokemon Research Lab -> 8x5
+            case 160:
+                renderMapObject(pokemonResearchLab, 8.0, 1.0 * j + 3.0, 0.0, 1.0 * i + 2, 8, 5,
+                                objects_copy, i, j);
+                break;
+            // Pokemon Center -> 5x3
+            case 180:
+                renderMapObject(pokemonCenter, 5.0, 1.0 * j + 2.0, 0.0, 1.0 * i + 1, 5, 3,
+                                objects_copy, i, j);
+                break;
+            // Poke Mart -> 4x3
+            case 181:
+                renderMapObject(pokeMart, 4.0, 1.0 * j + 1.55, 0.0, 1.0 * i + 1, 4, 3,
+                                objects_copy, i, j);
                 break;
             // Sign -> 1x1
             case 200:
