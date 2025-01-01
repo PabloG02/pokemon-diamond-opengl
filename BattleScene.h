@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Scene.h"
 #include "Direction.h"
+#include "Pokemon.h"
 #include <array>
 
 class BattleScene : public Scene {
@@ -21,14 +22,21 @@ class BattleScene : public Scene {
     void specialKeyboardCallback(unsigned char key, int x, int y);
 
     void drawUI();
+    void drawHPBars(int windowWidth, int windowHeight, const Pokemon &playerPkm,
+                    const Pokemon &rivalPkm);
     void changeSelectedOption(Direction direction);
     void triggerSelection();
+    void runFightSequence();
+    void endBattle();
 
   private:
     BattleScene() = default; // Private constructor for singleton
     Object battleBackground;
     Object playerPokemon;
     Object rivalPokemon;
+    // TODO
+    Pokemon playerPkm{"Staraptor", 60, 25, 10};
+    Pokemon rivalPkm{"Kricketot", 50, 20, 8};
 
     double alpha{20.0};
     double beta{24.0};

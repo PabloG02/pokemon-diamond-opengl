@@ -12,7 +12,7 @@
 #include "miniaudio.h"
 
 
-constexpr int REFRESH_RATE{60};
+constexpr int REFRESH_RATE{144};
 double lastFrameTime{0.0}, deltaTime{0.0};
 
 constexpr int WINDOW_WIDTH{900};

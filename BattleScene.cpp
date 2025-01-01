@@ -2,6 +2,7 @@
 #include "MouseHandler.h"
 #include "freeglut.h"
 #include "WorldScene.h"
+#include <iostream>
 
 void BattleScene::initialize() {
     if (!isInitialized) {
@@ -13,6 +14,10 @@ void BattleScene::initialize() {
         rivalPokemon.loadFromFile("./assets/art/models/kricketot/kricketot.obj");
         isInitialized = true;
     }
+    // TODO
+    playerPkm = Pokemon{"Staraptor", 60, 25, 10};
+    rivalPkm = Pokemon{"Kricketot", 50, 20, 8};
+
     // Audio
     audioEngine.playMusic("./assets/audio/music/battle-wild-pokemon.mp3");
     registerInputCallbacks();
@@ -69,7 +74,8 @@ void BattleScene::render() {
 }
 
 void BattleScene::update(double deltaTime) {
-    // Update logic
+    // Rotate camera
+    alpha += deltaTime * 1.5;
 }
 
 void BattleScene::drawUI() {
@@ -117,6 +123,8 @@ void BattleScene::drawUI() {
         glutBitmapString(GLUT_BITMAP_HELVETICA_18, text);
     }
 
+    drawHPBars(windowWidth, windowHeight, playerPkm, rivalPkm);
+
     // Restore previous projection and modelview matrices
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
@@ -125,6 +133,21 @@ void BattleScene::drawUI() {
 
     // Re-enable depth testing after 2D overlay
     glEnable(GL_DEPTH_TEST);
+}
+
+// TODO
+void BattleScene::drawHPBars(int windowWidth, int windowHeight, const Pokemon &playerPkm,
+                             const Pokemon &rivalPkm) {
+    glColor3ub(255, 255, 255);
+    glRasterPos2i(20, windowHeight - 40);
+    std::string playerHPText = playerPkm.name + " HP: " + std::to_string(playerPkm.hp);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18,
+                     reinterpret_cast<const unsigned char *>(playerHPText.c_str()));
+
+    glRasterPos2i(20, windowHeight - 70);
+    std::string rivalHPText = rivalPkm.name + " HP: " + std::to_string(rivalPkm.hp);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18,
+                     reinterpret_cast<const unsigned char *>(rivalHPText.c_str()));
 }
 
 void BattleScene::changeSelectedOption(Direction direction) {
@@ -138,7 +161,6 @@ void BattleScene::changeSelectedOption(Direction direction) {
     }
 }
 
-extern Scene *scene;
 void BattleScene::triggerSelection() {
     if (!visible)
         return;
@@ -146,6 +168,7 @@ void BattleScene::triggerSelection() {
     switch (selectedEntry) {
     case 0:
         // Fight
+        runFightSequence();
         break;
     case 1:
         // Pokemon
@@ -155,10 +178,55 @@ void BattleScene::triggerSelection() {
         break;
     case 3:
         // Run
-        scene = &WorldScene::getInstance();
-        scene->initialize();
+        endBattle();
         break;
     }
+}
+
+// TODO
+void BattleScene::runFightSequence() {
+    // Player attacks first
+    {
+        // A simple damage formula: base + random variance
+        int damage = std::max(playerPkm.attack - rivalPkm.defense, 0);
+        damage += rand() % 5; // small random bonus
+        rivalPkm.takeDamage(damage);
+
+        std::cout << playerPkm.name << " deals " << damage << " damage to " << rivalPkm.name
+                  << "! (HP left: " << rivalPkm.hp << ")\n";
+
+        // Check if rival fainted
+        if (rivalPkm.isFainted()) {
+            std::cout << rivalPkm.name << " fainted!\n";
+            // Transition out of battle, or mark battle as over
+            endBattle();
+            return;
+        }
+    }
+
+    // Rival attacks next
+    {
+        int damage = std::max(rivalPkm.attack - playerPkm.defense, 0);
+        damage += rand() % 5;
+        playerPkm.takeDamage(damage);
+
+        std::cout << rivalPkm.name << " deals " << damage << " damage to " << playerPkm.name
+                  << "! (HP left: " << playerPkm.hp << ")\n";
+
+        // Check if player fainted
+        if (playerPkm.isFainted()) {
+            std::cout << playerPkm.name << " fainted!\n";
+            // Transition out of battle, or mark battle as over
+            endBattle();
+            return;
+        }
+    }
+}
+
+extern Scene *scene;
+void BattleScene::endBattle() {
+    scene = &WorldScene::getInstance();
+    scene->initialize();
 }
 
 void BattleScene::keyboardCallback(unsigned char key, int x, int y) {
