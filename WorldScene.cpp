@@ -82,7 +82,8 @@ void WorldScene::renderPlayer() {
 
 void WorldScene::keyboardCallback(unsigned char key, int x, int y) {
     switch (key) {
-    case 'm':
+    case 'x':
+    case 'X':
         if (menu.isVisible()) {
             glutSpecialFunc([](int key, int x, int y) {
                 WorldScene::getInstance().specialKeyboardCallbackMovement(key, x, y);
@@ -95,6 +96,8 @@ void WorldScene::keyboardCallback(unsigned char key, int x, int y) {
         menu.toggleVisibility();
         break;
     case 13: // Enter key
+    case 'c':
+    case 'C':
         if (menu.isVisible()) {
             menu.triggerSelection();
         } else {

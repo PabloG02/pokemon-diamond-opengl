@@ -78,7 +78,7 @@ void IntroScene::render() {
     glPushMatrix();
     glColor3ub(255, 0, 0);
     glRasterPos2d(-1.25, -0.5);
-    const unsigned char *text = reinterpret_cast<const unsigned char *>("Press the A Button");
+    const unsigned char *text = reinterpret_cast<const unsigned char *>("Press the C Button");
     glutBitmapString(GLUT_BITMAP_HELVETICA_18, text);
     glPopMatrix();
 
@@ -92,7 +92,9 @@ void IntroScene::update(double deltaTime) {
 extern Scene *scene;
 void IntroScene::keyboardCallback(unsigned char key, int x, int y) {
     switch (key) {
-    case 'a':
+    case 13: // Enter key
+    case 'c':
+    case 'C':
         scene = &WorldScene::getInstance();
         scene->initialize();
         break;

@@ -164,6 +164,8 @@ void BattleScene::triggerSelection() {
 void BattleScene::keyboardCallback(unsigned char key, int x, int y) {
     switch (key) {
     case 13: // Enter key
+    case 'c':
+    case 'C':
         triggerSelection();
         break;
     }
