@@ -17,7 +17,8 @@ class Tile {
         Beach = 5,
         GrassBeach = 6,
         GrassBeachCorner = 7,
-        LakeWater = 9
+        LakeWater = 9,
+        SeaSide = 10
     };
 
     // Direction follows numpad layout:

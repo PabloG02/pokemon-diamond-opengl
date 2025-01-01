@@ -9,6 +9,8 @@ std::unordered_map<Tile::TileType, Tile::TileProperties> Tile::tilePropertiesMap
     {TileType::Beach, {"./assets/art/tileset/beach.png", true}},
     {TileType::GrassBeach, {"./assets/art/tileset/beachp.png", false}},
     {TileType::GrassBeachCorner, {"./assets/art/tileset/beachp.png", false}},
+    {TileType::LakeWater, {"./assets/art/tileset/lakep_1.png", false}},
+    {TileType::SeaSide, {"./assets/art/tileset/seaside3.png", false}},
 };
 
 GLuint Tile::getOrLoadTexture(TileType tileType) {
@@ -143,6 +145,10 @@ std::array<std::array<float, 2>, 4> Tile::calculateTexCoords(bool coversEntireTi
 }
 
 void Tile::render(int tileCode) {
+    // TODO: Remove
+    if (tileCode == 5)
+        tileCode = 10;
+
     TileType tileType{static_cast<TileType>(tileCode / 10)};
     Region region{static_cast<Region>(tileCode % 10)};
     bool regionChangesGeometry{false};
@@ -198,6 +204,7 @@ void Tile::renderLakeWaterTile(Region region) {
         glRotated(90.0, 0.0, 1.0, 0.0);
         break;
     case BottomCenter:
+    case BottomRight:
         glRotated(180.0, 0.0, 1.0, 0.0);
         break;
     case CenterRight:
@@ -206,41 +213,71 @@ void Tile::renderLakeWaterTile(Region region) {
         break;
     }
 
+    std::array<std::array<float, 2>, 4> texCoords;
     switch (region) {
     case TopLeft:
     case TopRight:
     case BottomLeft:
     case BottomRight:
-        // Default -> TopRight
+        // Default -> TopLeft
+        glColor3ub(255, 255, 255);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, getOrLoadTexture(TileType::SeaSide));
+
         glBegin(GL_QUADS);
         // Top
+        glTexCoord2d(1.0, 0.25);
         glVertex3f(-0.5, 0.0, -0.5);
+        glTexCoord2d(0.0, 0.25);
         glVertex3f(-0.5, 0.0, 0.5);
+        glTexCoord2d(0.0, 0.5);
         glVertex3f(-0.375, -0.125, 0.5);
+        glTexCoord2d(0.875, 0.5);
         glVertex3f(-0.375, -0.125, -0.375);
 
+        glTexCoord2d(0.0, 0.25);
         glVertex3f(-0.5, 0.0, -0.5);
+        glTexCoord2d(0.125, 0.5);
         glVertex3f(-0.375, -0.125, -0.375);
+        glTexCoord2d(1.0, 0.5);
         glVertex3f(0.5, -0.125, -0.375);
+        glTexCoord2d(1.0, 0.25);
         glVertex3f(0.5, 0.0, -0.5);
 
         // Middle
+        glTexCoord2d(1.0, 0.5);
         glVertex3f(-0.375, -0.125, -0.375);
+        glTexCoord2d(0.0, 0.5);
         glVertex3f(-0.375, -0.125, 0.5);
+        glTexCoord2d(0.0, 1.0);
         glVertex3f(-0.25, -0.5625, 0.5);
+        glTexCoord2d(0.875, 1.0);
         glVertex3f(-0.25, -0.5625, -0.25);
 
+        glTexCoord2d(0.0, 0.5);
         glVertex3f(-0.375, -0.125, -0.375);
+        glTexCoord2d(0.125, 1.0);
         glVertex3f(-0.25, -0.5625, -0.25);
+        glTexCoord2d(1.0, 1.0);
         glVertex3f(0.5, -0.5625, -0.25);
+        glTexCoord2d(1.0, 0.5);
         glVertex3f(0.5, -0.125, -0.375);
-
-        // Bottom
-        glVertex3f(-0.25, -0.5625, -0.25);
-        glVertex3f(-0.25, -0.5625, 0.5);
-        glVertex3f(0.5, -0.5625, 0.5);
-        glVertex3f(0.5, -0.5625, -0.25);
         glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, getOrLoadTexture(TileType::LakeWater));
+        texCoords = calculateTexCoords(false, TileType::LakeWater, TopLeft);
+        // Bottom
+        glBegin(GL_QUADS);
+        glTexCoord2f(texCoords[0][0], texCoords[0][1]);
+        glVertex3f(-0.25, -0.5625, -0.25);
+        glTexCoord2f(texCoords[1][0], texCoords[1][1]);
+        glVertex3f(0.5, -0.5625, -0.25);
+        glTexCoord2f(texCoords[2][0], texCoords[2][1]);
+        glVertex3f(0.5, -0.5625, 0.5);
+        glTexCoord2f(texCoords[3][0], texCoords[3][1]);
+        glVertex3f(-0.25, -0.5625, 0.5);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
         break;
 
     case TopCenter:
@@ -248,22 +285,44 @@ void Tile::renderLakeWaterTile(Region region) {
     case CenterLeft:
     case CenterRight:
         // Default -> TopCenter
+        glColor3ub(255, 255, 255);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, getOrLoadTexture(TileType::SeaSide));
+
         glBegin(GL_QUADS);
+        glTexCoord2d(0.0, 0.25);
         glVertex3f(-0.5, 0.0, -0.5);
+        glTexCoord2d(0.0, 0.5);
         glVertex3f(-0.5, -0.125, -0.375);
+        glTexCoord2d(1.0, 0.5);
         glVertex3f(0.5, -0.125, -0.375);
+        glTexCoord2d(1.0, 0.25);
         glVertex3f(0.5, 0.0, -0.5);
 
+        glTexCoord2d(0.0, 0.5);
         glVertex3f(-0.5, -0.125, -0.375);
+        glTexCoord2d(0.0, 1.0);
         glVertex3f(-0.5, -0.5625, -0.25);
+        glTexCoord2d(1.0, 1.0);
         glVertex3f(0.5, -0.5625, -0.25);
+        glTexCoord2d(1.0, 0.5);
         glVertex3f(0.5, -0.125, -0.375);
-
-        glVertex3f(-0.5, -0.5625, -0.25);
-        glVertex3f(-0.5, -0.5625, 0.5);
-        glVertex3f(0.5, -0.5625, 0.5);
-        glVertex3f(0.5, -0.5625, -0.25);
         glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, getOrLoadTexture(TileType::LakeWater));
+        texCoords = calculateTexCoords(false, TileType::LakeWater, TopCenter);
+        glBegin(GL_QUADS);
+        glTexCoord2f(texCoords[0][0], texCoords[0][1]);
+        glVertex3f(-0.5, -0.5625, -0.25);
+        glTexCoord2f(texCoords[1][0], texCoords[1][1]);
+        glVertex3f(0.5, -0.5625, -0.25);
+        glTexCoord2f(texCoords[2][0], texCoords[2][1]);
+        glVertex3f(0.5, -0.5625, 0.5);
+        glTexCoord2f(texCoords[3][0], texCoords[3][1]);
+        glVertex3f(-0.5, -0.5625, 0.5);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
         break;
 
     case Center:
