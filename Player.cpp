@@ -3,6 +3,12 @@
 #include "MapData.h"
 #include "WorldScene.h"
 #include <algorithm>
+#include "BattleScene.h"
+
+// Create constructor for Player
+Player::Player() {
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+}
 
 void Player::setIdleModel(const std::string &filename) {
     idleModel.loadFromFile(filename);
@@ -113,8 +119,11 @@ void Player::update(double deltaTime) {
         x = static_cast<double>(targetX);
         z = static_cast<double>(targetZ);
 
+        if (shouldTriggerWildBattle()) {
+            startWildBattle();
+        }
         // If we have a queued movement, start it immediately
-        if (hasQueuedMovement) {
+        else if (hasQueuedMovement) {
             // Cycle through walking models
             currentWalkingModel = (currentWalkingModel + 1) % walkingModels.size();
 
@@ -197,4 +206,18 @@ void Player::interact() {
     else if (collisionMap[targetEventZ][targetEventX] == "100") { // TODO: Change
         printf("Interacted with event at (%d, %d)\n", targetEventX, targetEventZ);
     }
+}
+
+bool Player::shouldTriggerWildBattle() const {
+    // Check if the tile the player is on is a grass tile
+    return collisionMap[static_cast<int>(z)][static_cast<int>(x)] == "1" && std::rand() % 256 < 25;
+}
+
+extern Scene *scene;
+void Player::startWildBattle() {
+    // Remove queued movement
+    hasQueuedMovement = false;
+    // Start battle
+    scene = &BattleScene::getInstance();
+    scene->initialize();
 }

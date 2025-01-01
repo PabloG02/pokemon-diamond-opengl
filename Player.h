@@ -6,7 +6,7 @@
 
 class Player {
   public:
-    Player() = default;
+    Player();
 
     void setIdleModel(const std::string &filename);
     void setWalkingModel(const std::vector<std::string> &filenames);
@@ -24,6 +24,8 @@ class Player {
     bool getIsMoving() const;
 
     void interact();
+    bool shouldTriggerWildBattle() const;
+    void startWildBattle();
 
   private:
     Object idleModel;                  // The player's idle 3D model

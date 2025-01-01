@@ -6,7 +6,6 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include "BattleScene.h"
 
 void WorldScene::initialize() {
     auto &mapInfo = MapData::maps.at(currentMapId);
@@ -81,7 +80,6 @@ void WorldScene::renderPlayer() {
     glPopMatrix();
 }
 
-extern Scene *scene;
 void WorldScene::keyboardCallback(unsigned char key, int x, int y) {
     switch (key) {
     case 'm':
@@ -102,10 +100,6 @@ void WorldScene::keyboardCallback(unsigned char key, int x, int y) {
         } else {
             player.interact();
         }
-        break;
-    case 'b':
-        scene = &BattleScene::getInstance();
-        scene->initialize();
         break;
     }
 }
